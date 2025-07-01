@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, MapPin, Building, Save } from 'lucide-react';
 import { Service, CreateClinicRequest } from '../types/clinic';
 import { usStates } from '../data/masterData';
-import { useClinicCache } from '../hooks/useClinicCache';
+import { useClinicData } from '../hooks/useClinicData';
 import { useLogger } from '../hooks/useLogger';
 import { apiService } from '../services/api';
 
@@ -15,7 +15,7 @@ interface SelectedService {
 }
 
 export const AddClinicForm: React.FC = () => {
-  const { addClinic } = useClinicCache();
+  const { addClinic } = useClinicData();
   const { log } = useLogger();
 
   // Load services from API instead of predefined

@@ -1,4 +1,4 @@
-import { Clinic, Service, CreateClinicRequest } from '../types/clinic';
+import { Clinic, Service, CreateClinicRequest, LogEntry } from '../types/clinic';
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -27,6 +27,16 @@ class ApiService {
       }
 
       const data = await response.json();
+      
+      // Add debugging
+      console.log(`API Response [${endpoint}]:`, {
+        status: response.status,
+        data: data,
+        dataType: typeof data,
+        isArray: Array.isArray(data),
+        length: Array.isArray(data) ? data.length : 'N/A'
+      });
+      
       return { data };
     } catch (error) {
       console.error(`API Error [${endpoint}]:`, error);
@@ -36,19 +46,37 @@ class ApiService {
 
   // Clinics endpoints
   async getClinics() {
-    return this.request<Clinic[]>('/clinics');
+    console.log('Calling getClinics API...');
+    const result = await this.request<Clinic[]>('/clinics');
+    console.log('getClinics result:', result);
+    return result;
   }
 
   async createClinic(clinicData: CreateClinicRequest) {
-    return this.request<Clinic>('/clinic-create', {
+    return this.request<Clinic>('/clinics', {
       method: 'POST',
       body: JSON.stringify(clinicData),
     });
   }
 
+  // New cached endpoints
+  async getClinicsByCity(city: string) {
+    console.log(`Calling getClinicsByCity API for city: ${city}...`);
+    const result = await this.request<Clinic[]>(`/clinics/city/${encodeURIComponent(city)}`);
+    console.log('getClinicsByCity result:', result);
+    return result;
+  }
+
+  async getClinicById(clinicId: string) {
+    return this.request<Clinic>(`/clinics/${encodeURIComponent(clinicId)}`);
+  }
+
   // Services endpoints
   async getServices() {
-    return this.request<Service[]>('/services');
+    console.log('Calling getServices API...');
+    const result = await this.request<Service[]>('/services');
+    console.log('getServices result:', result);
+    return result;
   }
 
   // Logs endpoints
@@ -63,74 +91,6 @@ class ApiService {
       method: 'POST',
     });
   }
-}
-
-// Updated interfaces to match API response
-export interface Service {
-  id: string;
-  serviceId: string; // Added for API compatibility
-  name: string;
-  code: string;
-  description: string;
-  averagePrice: number;
-  isActive: boolean;
-}
-
-export interface ClinicService {
-  serviceId: string;
-  serviceName: string;
-  serviceCode: string;
-  serviceDescription: string; // Updated field name
-  defaultPrice: number; // New field
-  customPrice: number | null; // New field
-  isOffered: boolean; // Updated field name
-}
-
-export interface Clinic {
-  clinicId: string; // Updated field name
-  name: string; // Updated field name
-  businessName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-  latitude: number;
-  longitude: number;
-  services: ClinicService[];
-}
-
-// New interface for creating clinics
-export interface CreateClinicRequest {
-  name: string;
-  businessName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-  latitude?: number;
-  longitude?: number;
-  serviceIds: string[];
-  customPrices: Record<string, number>;
-}
-
-export interface SearchFilters {
-  city: string;
-  state: string;
-  services: string[];
-  searchTerm: string;
-}
-
-export interface LogEntry {
-  id: string;
-  message: string;
-  priority: 'Critical' | 'High' | 'Medium' | 'Low';
-  type: 'Info' | 'Warning' | 'Error';
-  timestamp: string;
-  project: string;
-  className: string;
-  method: string;
 }
 
 export const apiService = new ApiService();

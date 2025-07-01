@@ -1,5 +1,6 @@
 export interface Service {
   id: string;
+  serviceId: string; // Added for API compatibility
   name: string;
   code: string;
   description: string;
@@ -11,14 +12,15 @@ export interface ClinicService {
   serviceId: string;
   serviceName: string;
   serviceCode: string;
-  description: string;
-  price: number;
-  isActive: boolean;
+  serviceDescription: string; // Updated field name
+  defaultPrice: number; // New field
+  customPrice: number | null; // New field
+  isOffered: boolean; // Updated field name
 }
 
 export interface Clinic {
-  id: string;
-  clinicName: string;
+  clinicId: string; // Updated field name
+  name: string; // Updated field name
   businessName: string;
   streetAddress: string;
   city: string;
@@ -27,8 +29,22 @@ export interface Clinic {
   zipCode: string;
   latitude: number;
   longitude: number;
-  dateCreated: string;
   services: ClinicService[];
+}
+
+// New interface for creating clinics
+export interface CreateClinicRequest {
+  name: string;
+  businessName: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+  latitude?: number;
+  longitude?: number;
+  serviceIds: string[];
+  customPrices: Record<string, number>;
 }
 
 export interface SearchFilters {
@@ -36,4 +52,15 @@ export interface SearchFilters {
   state: string;
   services: string[];
   searchTerm: string;
+}
+
+export interface LogEntry {
+  id: string;
+  message: string;
+  priority: 'Critical' | 'High' | 'Medium' | 'Low';
+  type: 'Info' | 'Warning' | 'Error';
+  timestamp: string;
+  project: string;
+  className: string;
+  method: string;
 }
