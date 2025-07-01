@@ -1,3 +1,5 @@
+import { Clinic, Service, CreateClinicRequest } from '../types/clinic';
+
 const API_BASE_URL = 'http://localhost:3000/api';
 
 export interface ApiResponse<T> {
@@ -38,10 +40,15 @@ class ApiService {
   }
 
   async createClinic(clinicData: CreateClinicRequest) {
-    return this.request<Clinic>('/clinics', {
+    return this.request<Clinic>('/clinic-create', {
       method: 'POST',
       body: JSON.stringify(clinicData),
     });
+  }
+
+  // Services endpoints
+  async getServices() {
+    return this.request<Service[]>('/services');
   }
 
   // Logs endpoints
@@ -58,9 +65,10 @@ class ApiService {
   }
 }
 
-// Types
+// Updated interfaces to match API response
 export interface Service {
   id: string;
+  serviceId: string; // Added for API compatibility
   name: string;
   code: string;
   description: string;
@@ -72,14 +80,15 @@ export interface ClinicService {
   serviceId: string;
   serviceName: string;
   serviceCode: string;
-  description: string;
-  price: number;
-  isActive: boolean;
+  serviceDescription: string; // Updated field name
+  defaultPrice: number; // New field
+  customPrice: number | null; // New field
+  isOffered: boolean; // Updated field name
 }
 
 export interface Clinic {
-  id: string;
-  clinicName: string;
+  clinicId: string; // Updated field name
+  name: string; // Updated field name
   businessName: string;
   streetAddress: string;
   city: string;
@@ -88,12 +97,12 @@ export interface Clinic {
   zipCode: string;
   latitude: number;
   longitude: number;
-  dateCreated: string;
   services: ClinicService[];
 }
 
+// New interface for creating clinics
 export interface CreateClinicRequest {
-  clinicName: string;
+  name: string;
   businessName: string;
   streetAddress: string;
   city: string;
@@ -102,11 +111,8 @@ export interface CreateClinicRequest {
   zipCode: string;
   latitude?: number;
   longitude?: number;
-  services: {
-    serviceId: string;
-    price: number;
-    isActive: boolean;
-  }[];
+  serviceIds: string[];
+  customPrices: Record<string, number>;
 }
 
 export interface SearchFilters {

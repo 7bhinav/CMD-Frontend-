@@ -66,7 +66,7 @@ export const ServicesManager: React.FC = () => {
         {/* Services Grid */}
         <div className="grid gap-6">
           {services.map((service) => (
-            <div key={service.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div key={service.serviceId} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="flex flex-col lg:flex-row justify-between">
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-4">
@@ -95,7 +95,7 @@ export const ServicesManager: React.FC = () => {
                         
                         <div className="flex items-center text-gray-500">
                           <Code className="h-5 w-5 mr-1" />
-                          <span className="text-sm">ID: {service.id}</span>
+                          <span className="text-sm">ID: {service.serviceId}</span>
                         </div>
                       </div>
                     </div>
@@ -120,14 +120,8 @@ export const ServicesManager: React.FC = () => {
                         </span>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Category:</span>
-                        <span className="ml-2 text-gray-600">
-                          {service.code === 'CONSULT' ? 'Consultation' : 
-                           service.code === 'XRAY' ? 'Imaging' :
-                           service.code === 'BLOOD' ? 'Laboratory' :
-                           service.code === 'COVID' ? 'Testing' :
-                           service.code === 'MRI' ? 'Advanced Imaging' : 'Other'}
-                        </span>
+                        <span className="font-medium text-gray-700">Service ID:</span>
+                        <span className="ml-2 text-gray-600">{service.serviceId}</span>
                       </div>
                     </div>
                   </div>

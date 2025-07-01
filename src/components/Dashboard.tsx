@@ -11,7 +11,6 @@ export const Dashboard: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    // Update filtered clinics directly from clinics without search API
     setFilteredClinics(clinics);
   }, [clinics]);
 
@@ -130,7 +129,7 @@ export const Dashboard: React.FC = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {services.map(service => (
-                  <option key={service.id} value={service.id}>
+                  <option key={service.serviceId} value={service.serviceId}>
                     {service.name}
                   </option>
                 ))}
@@ -150,13 +149,13 @@ export const Dashboard: React.FC = () => {
 
         <div className="grid gap-6">
           {filteredClinics.map((clinic) => (
-            <div key={clinic.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div key={clinic.clinicId} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
               <div className="flex flex-col lg:flex-row justify-between">
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-1">
-                        {clinic.clinicName}
+                        {clinic.name}
                       </h3>
                       <p className="text-gray-600 mb-2">{clinic.businessName}</p>
                       <div className="flex items-center text-gray-500 mb-2">
@@ -165,33 +164,35 @@ export const Dashboard: React.FC = () => {
                           {clinic.streetAddress}, {clinic.city}, {clinic.state} {clinic.zipCode}
                         </span>
                       </div>
-                      <div className="flex items-center text-gray-500">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        <span className="text-sm">
-                          Added {new Date(clinic.dateCreated).toLocaleDateString()}
-                        </span>
-                      </div>
                     </div>
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                      {clinic.id}
+                      {clinic.clinicId}
                     </span>
                   </div>
 
                   <div>
                     <h4 className="font-medium text-gray-900 mb-3">Services Offered</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {clinic.services.map((service) => (
+                      {clinic.services.filter(service => service.isOffered).map((service) => (
                         <div key={service.serviceId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div>
                             <p className="font-medium text-gray-900">{service.serviceName}</p>
                             <p className="text-sm text-gray-600">{service.serviceCode}</p>
+                            <p className="text-xs text-gray-500">{service.serviceDescription}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-green-600">${service.price}</p>
+                            <p className="font-semibold text-green-600">
+                              ${service.customPrice || service.defaultPrice}
+                            </p>
+                            {service.customPrice && (
+                              <p className="text-xs text-gray-500">
+                                Default: ${service.defaultPrice}
+                              </p>
+                            )}
                             <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                              service.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              service.isOffered ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
-                              {service.isActive ? 'Active' : 'Inactive'}
+                              {service.isOffered ? 'Available' : 'Not Available'}
                             </span>
                           </div>
                         </div>

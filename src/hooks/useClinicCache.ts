@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clinic, SearchFilters } from '../types/clinic';
+import { Clinic, SearchFilters, CreateClinicRequest } from '../types/clinic';
 import { apiService } from '../services/api';
 import { useLogger } from './useLogger';
 
@@ -46,14 +46,30 @@ export const useClinicCache = () => {
     log('Cache miss - searching via API', 'Low', 'Info', 'useClinicCache', 'searchClinics');
 
     try {
-      // Placeholder for future API integration
-      const results: Clinic[] = []; // Empty results for now
+      // For now, return filtered clinics from current data
+      // In future, this could be a dedicated search API endpoint
+      const filtered = clinics.filter(clinic => {
+        if (filters.city && !clinic.city.toLowerCase().includes(filters.city.toLowerCase())) {
+          return false;
+        }
+        if (filters.state && !clinic.state.toLowerCase().includes(filters.state.toLowerCase())) {
+          return false;
+        }
+        if (filters.searchTerm) {
+          const searchLower = filters.searchTerm.toLowerCase();
+          if (!clinic.name.toLowerCase().includes(searchLower) && 
+              !clinic.businessName.toLowerCase().includes(searchLower)) {
+            return false;
+          }
+        }
+        return true;
+      });
 
       // Cache the result
-      setCache(prev => new Map(prev).set(cacheKey, results));
-      log(`Cached search result with ${results.length} clinics`, 'Low', 'Info', 'useClinicCache', 'searchClinics');
+      setCache(prev => new Map(prev).set(cacheKey, filtered));
+      log(`Cached search result with ${filtered.length} clinics`, 'Low', 'Info', 'useClinicCache', 'searchClinics');
 
-      return results;
+      return filtered;
     } catch (error) {
       log(`Error searching clinics: ${error}`, 'High', 'Error', 'useClinicCache', 'searchClinics');
       console.error('Failed to search clinics:', error);
@@ -61,38 +77,11 @@ export const useClinicCache = () => {
     }
   };
 
-  const getLogs = async (): Promise<any[]> => {
-    log('Fetching logs from API', 'Low', 'Info', 'useClinicCache', 'getLogs');
-  
-    try {
-      const response = await apiService.request('/logs', {
-        method: 'GET',
-      });
-  
-      if (response.error) {
-        throw new Error(response.error);
-      }
-  
-      log(`Successfully fetched ${response.data?.length || 0} logs`, 'Low', 'Info', 'useClinicCache', 'getLogs');
-      return response.data || [];
-    } catch (error) {
-      log(`Error fetching logs: ${error}`, 'High', 'Error', 'useClinicCache', 'getLogs');
-      console.error('Failed to fetch logs:', error);
-      return [];
-    }
-  };
-
-  const addClinic = async (clinicData: any): Promise<boolean> => {
+  const addClinic = async (clinicData: CreateClinicRequest): Promise<boolean> => {
     log(`Adding new clinic: ${clinicData.name}`, 'Medium', 'Info', 'useClinicCache', 'addClinic');
     
     try {
-      const response = await apiService.request('/clinic-create', {
-        method: 'POST',
-        body: JSON.stringify(clinicData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiService.createClinic(clinicData);
   
       if (response.error) {
         throw new Error(response.error);
@@ -123,6 +112,5 @@ export const useClinicCache = () => {
     addClinic,
     getCacheStats,
     refreshClinics: loadClinics,
-    getLogs, // Added method to fetch logs
   };
 };
