@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, MapPin, Building, Save } from 'lucide-react';
+import { Plus, Trash2, Building, Save } from 'lucide-react';
 import { Service, CreateClinicRequest } from '../types/clinic';
 import { usStates } from '../data/masterData';
 import { useClinicData } from '../hooks/useClinicData';
