@@ -25,7 +25,7 @@ export const useClinicData = () => {
       console.log('Processed clinics data:', {
         count: clinicsData.length,
         sample: clinicsData[0],
-        allIds: clinicsData.map(c => c.clinicId || c.id)
+        allIds: clinicsData.map(c => c.clinicId)
       });
       
       setClinics(clinicsData);
@@ -58,7 +58,7 @@ export const useClinicData = () => {
       console.log('Search results processed:', {
         city,
         count: searchResults.length,
-        clinics: searchResults.map(c => ({ id: c.clinicId || c.id, name: c.name }))
+        clinics: searchResults.map(c => ({ id: c.clinicId, name: c.name }))
       });
       
       log(`Found ${searchResults.length} clinics in ${city}`, 'Low', 'Info', 'useClinicData', 'searchClinicsByCity');
