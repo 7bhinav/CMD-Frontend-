@@ -130,13 +130,13 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Debug Info (Remove in production) */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm">
+      {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm">
         <strong>Debug Info:</strong> 
         Total Clinics: {clinics.length}, 
         Filtered: {filteredClinics.length}, 
         Loading: {isLoading ? 'Yes' : 'No'},
         Searching: {isSearching ? 'Yes' : 'No'}
-      </div>
+      </div> */}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

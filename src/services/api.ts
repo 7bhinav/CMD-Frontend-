@@ -53,7 +53,7 @@ class ApiService {
   }
 
   async createClinic(clinicData: CreateClinicRequest) {
-    return this.request<Clinic>('/clinics', {
+    return this.request<Clinic>('/clinic-create', {
       method: 'POST',
       body: JSON.stringify(clinicData),
     });
